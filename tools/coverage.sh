@@ -21,10 +21,12 @@ mkdir -p $htmlcov_dir
 echo "Starting coverage"
 
 
+# creates .coverage in working directory - workaround is to set env variable
+export COVERAGE_FILE=/tmp/.coverage
+
 coverage run --source $SOURCE_DIR --omit "*/site-packages/*,*/test*/*" --branch $@
 
 # coverage report
-
 coverage html -d $htmlcov_dir
 
 
