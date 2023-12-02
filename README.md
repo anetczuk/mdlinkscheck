@@ -35,6 +35,7 @@ element links can point to implicit elements (*GitHub* does it in it's own way, 
 ## References
 
 - [HTML <a> href Attribute](https://www.w3schools.com/tags/att_a_href.asp)
+- [HTML <img> src Attribute](https://www.w3schools.com/tags/att_img_src.asp)
 - [Markdown format](https://www.markdownguide.org/basic-syntax/)
 - [mistune](https://github.com/lepture/mistune) - Markdown to HTML conversion
 
