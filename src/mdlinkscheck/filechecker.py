@@ -208,10 +208,10 @@ def get_targets(soup):
     # on GitHub headers are converted to targets
     header_labels = extract_header_labels(soup)
 
-    # bitbucket compatibility
-    bitbucket_header_labels = [convert_header_to_bitbucket_target(item) for item in header_labels]
     header_labels_dashes = [convert_header_to_dashes(item) for item in header_labels]
-    header_labels_underscore = [convert_header_to_underscore(item) for item in header_labels]
+    # header_labels_underscore = [convert_header_to_underscore(item) for item in header_labels]
+    # bitbucket compatibility
+    header_labels_bitbucket = [convert_header_to_bitbucket_target(item) for item in header_labels]
 
     anchor_targets = set()
     for link in soup.find_all("a"):
@@ -223,18 +223,12 @@ def get_targets(soup):
             anchor_targets.add(link_name)
 
     ret_data = set()
-    ret_data.update(header_labels)
-    ret_data.update(bitbucket_header_labels)
+    # ret_data.update(header_labels)
     ret_data.update(header_labels_dashes)
-    ret_data.update(header_labels_underscore)
+    # ret_data.update(header_labels_underscore)
+    ret_data.update(header_labels_bitbucket)
     ret_data.update(anchor_targets)
     return ret_data
-
-
-def convert_header_to_bitbucket_target(header_label):
-    target = header_label.lower()
-    target = target.replace(" ", "-")
-    return f"markdown-header-{target}"
 
 
 def convert_header_to_dashes(header_label):
@@ -243,10 +237,17 @@ def convert_header_to_dashes(header_label):
     return target
 
 
-def convert_header_to_underscore(header_label):
+# def convert_header_to_underscore(header_label):
+#     target = header_label.lower()
+#     target = target.replace(" ", "_")
+#     return target
+
+
+def convert_header_to_bitbucket_target(header_label):
+    # bitbucket adds prefix to all section elements
     target = header_label.lower()
-    target = target.replace(" ", "_")
-    return target
+    target = target.replace(" ", "-")
+    return f"markdown-header-{target}"
 
 
 def extract_header_labels(soup):

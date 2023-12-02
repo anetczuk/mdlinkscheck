@@ -88,7 +88,7 @@ def main():
 
     md_files = filter_items(md_files, args.excludes)
 
-    _LOGGER.info("files to check:\n%s", "\n".join(md_files))
+    _LOGGER.info("files to check:\n%s\n", "\n".join(md_files))
 
     valid = True
     for md_file in md_files:
