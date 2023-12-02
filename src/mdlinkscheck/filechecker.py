@@ -127,21 +127,24 @@ class FileChecker:
                 self.invalid_links.add(img_src)
 
     def _checkHref(self, link_href):
-        if link_href.startswith("mailto:"):
-            return True
-        if self._checkURL(link_href):
-            # valid file
-            return True
-        local_path = os.path.join(self.md_dir, link_href)
-        if os.path.isdir(local_path):
-            # valid directory
-            return True
-
         if link_href == "#":
             # "back to top" special link
             return True
         if link_href == "#top":
             # "back to top" special link
+            return True
+
+        if link_href.startswith("mailto:"):
+            # consider "mailto" always valid
+            return True
+
+        if self._checkURL(link_href):
+            # valid file
+            return True
+
+        local_path = os.path.join(self.md_dir, link_href)
+        if os.path.isdir(local_path):
+            # valid directory
             return True
 
         target_data = link_href.split("#")
@@ -152,6 +155,8 @@ class FileChecker:
         # url with target
         target_url = target_data[0]
         target_label = target_data[1]
+        target_label = target_label.lower()
+
         if not target_url:
             # local file
             if self._checkLocalTarget(target_label):
@@ -205,7 +210,7 @@ def get_targets(soup):
 
     # bitbucket compatibility
     bitbucket_header_labels = [convert_header_to_bitbucket_target(item) for item in header_labels]
-    header_labels_hyphen = [convert_header_to_hyphen(item) for item in header_labels]
+    header_labels_dashes = [convert_header_to_dashes(item) for item in header_labels]
     header_labels_underscore = [convert_header_to_underscore(item) for item in header_labels]
 
     anchor_targets = set()
@@ -220,7 +225,7 @@ def get_targets(soup):
     ret_data = set()
     ret_data.update(header_labels)
     ret_data.update(bitbucket_header_labels)
-    ret_data.update(header_labels_hyphen)
+    ret_data.update(header_labels_dashes)
     ret_data.update(header_labels_underscore)
     ret_data.update(anchor_targets)
     return ret_data
@@ -232,7 +237,7 @@ def convert_header_to_bitbucket_target(header_label):
     return f"markdown-header-{target}"
 
 
-def convert_header_to_hyphen(header_label):
+def convert_header_to_dashes(header_label):
     target = header_label.lower()
     target = target.replace(" ", "-")
     return target

@@ -30,3 +30,10 @@ class FileCheckerTest(unittest.TestCase):
         self.assertTrue(valid)
         valid = checker.checkMarkdown()
         self.assertTrue(valid)
+
+    def test_checkMarkdown_github(self):
+        file_path = get_data_path("github.md")
+        checker = FileChecker(file_path)
+
+        valid = checker.checkMarkdown()
+        self.assertTrue(valid)
