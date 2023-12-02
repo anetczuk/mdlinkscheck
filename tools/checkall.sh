@@ -14,8 +14,8 @@ cd $SCRIPT_DIR
 ./doccheck.sh
 ./typecheck.sh
 
-echo "checking links in MD files"
-$SCRIPT_DIR/../src/mdlinkscheck/mdlinkscheck.py -d ..
+echo -e "\nchecking links in MD files"
+python3 -m mdlinkscheck -d .. --excludes ".*/tmp/.*" ".*/src/test.*/.*"
 
 
-echo "everything is fine"
+echo -e "\neverything is fine"

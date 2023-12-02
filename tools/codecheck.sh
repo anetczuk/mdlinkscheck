@@ -91,7 +91,7 @@ echo "to ignore warning for one line put following comment in end of line: # nos
 skip_list="B301,B403"
 
 #echo "to ignore warning for one line put following comment in end of line: # nosec
-bandit --skip "${skip_list}" -r $src_dir $example_files $SCRIPT_DIR
+bandit --skip "${skip_list}" -r $src_dir $example_files $SCRIPT_DIR -x "$src_dir/test*"
 exit_code=$?
 if [ $exit_code -ne 0 ]; then
     exit $exit_code

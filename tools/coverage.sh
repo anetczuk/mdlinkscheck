@@ -21,7 +21,7 @@ mkdir -p $htmlcov_dir
 echo "Starting coverage"
 
 
-coverage run --source $SOURCE_DIR --omit */site-packages/* --branch $@
+coverage run --source $SOURCE_DIR --omit "*/site-packages/*,*/test*/*" --branch $@
 
 # coverage report
 
