@@ -19,12 +19,28 @@ _LOGGER = logging.getLogger(__name__)
 class MainTest(unittest.TestCase):
     def test_main_valid(self):
         md_path = get_data_path("empty.md")
-        error_code = main(["--silence", "--file", md_path])
+        error_code = main(["--silence", "--files", md_path])
 
         self.assertEqual(error_code, 0)
 
     def test_main_invalid(self):
         md_path = get_data_path("invalid.md")
-        error_code = main(["--silence", "--file", md_path])
+        error_code = main(["--silence", "--files", md_path])
 
         self.assertEqual(error_code, 1)
+
+    def test_main_multiple_files(self):
+        md1_path = get_data_path("github.md")
+        md2_path = get_data_path("bitbucket.md")
+        error_code = main(
+            [
+                "--silence",
+                "--files",
+                md1_path,
+                md2_path,
+                "--implicit-heading-id-github",
+                "--implicit-heading-id-bitbucket",
+            ]
+        )
+
+        self.assertEqual(error_code, 0)

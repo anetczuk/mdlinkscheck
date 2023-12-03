@@ -60,14 +60,18 @@ def main(args=None):
     parser = argparse.ArgumentParser(description="dump tools")
     parser.add_argument("-la", "--logall", action="store_true", help="Log all messages")
     parser.add_argument("--silence", action="store_true", help="Do not output log messages")
-    parser.add_argument("-d", "--dir", action="store", help="Path to directory to search .md files and check")
-    parser.add_argument("-f", "--file", action="store", help="Path to file to check")
+    parser.add_argument(
+        "-d", "--dir", action="store", help="Path to directory to search .md files for for verification"
+    )
+    parser.add_argument(
+        "-f", "--files", metavar="N", type=str, nargs="+", help="Space separated list of paths to files to check"
+    )
     parser.add_argument(
         "--excludes",
         metavar="N",
         type=str,
         nargs="+",
-        help="space separated list of regex strings applied on found files to be excluded from processing",
+        help="Space separated list of regex strings applied on found files to be excluded from processing",
     )
     parser.add_argument(
         "--implicit-heading-id-github",
@@ -92,13 +96,13 @@ def main(args=None):
         logging.basicConfig(format="%(message)s")
         logging.getLogger().setLevel(logging.INFO)
 
-    if not args.file and not args.dir:
-        _LOGGER.error("argument required: --file or --dir")
+    if not args.files and not args.dir:
+        _LOGGER.error("argument required: --files or --dir")
         return 1
 
     md_files = find_md_files(args.dir)
-    if args.file:
-        md_files.append(args.file)
+    if args.files:
+        md_files.extend(args.files)
 
     md_files = filter_items(md_files, args.excludes)
 
