@@ -57,7 +57,7 @@ def filter_items(items_list, regex_list):
 
 
 def main(args=None):
-    parser = argparse.ArgumentParser(description="dump tools")
+    parser = argparse.ArgumentParser(description="check links in Markdown")
     parser.add_argument("-la", "--logall", action="store_true", help="Log all messages")
     parser.add_argument("--silence", action="store_true", help="Do not output log messages")
     parser.add_argument(
@@ -88,7 +88,7 @@ def main(args=None):
     args = parser.parse_args(args=args)
 
     if args.silence is True:
-        pass
+        logging.getLogger().setLevel(logging.FATAL)
     elif args.logall is True:
         logging.basicConfig()
         logging.getLogger().setLevel(logging.DEBUG)

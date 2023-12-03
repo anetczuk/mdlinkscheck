@@ -7,13 +7,9 @@ set -eu
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 
 
-cd $SCRIPT_DIR
+$SCRIPT_DIR/doc/generate-doc.sh
+
+$SCRIPT_DIR/tools/mdcheck.sh
 
 
-./codecheck.sh
-./doccheck.sh
-./typecheck.sh
-./mdcheck.sh
-
-
-echo -e "\neverything is fine"
+echo "generation completed"

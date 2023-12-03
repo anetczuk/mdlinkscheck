@@ -2,17 +2,28 @@
 
 Simple things can be difficult. Links can be complicated. With this package headache no more.
 
-Package verifies links in Markdown and validates it.
+Package verifies links in Markdown files.
 
 
 ## Features
 
-- walk through linked Markdown files
 - find Markdown files in subdirectories
+- walk through linked Markdown files
 - check standard links
 - check linked images
 - handle relative and absolute links, local and external resources
 - handle links to elements
+- ignore *Markdown* syntax in code blocks (*C++* lambdas syntax is simillar to *Markdown* links)
+
+
+## Running
+
+[There](doc/cmdargs.md) is description of command line arguments. To simple run execute:
+```
+checkmdlinks.py --dir <path-to-dir-with-MD-files>
+```
+Application then will go recursively and look for `.md` files and validate them. Other options include passing
+particular files and setting compatibility mode with *GitHub* or *BitBucket* version of *Markdown*.
 
 
 ## How it works?
@@ -34,8 +45,8 @@ element links can point to implicit elements (*GitHub* does it in it's own way, 
 
 ## References
 
-- [HTML <a> href Attribute](https://www.w3schools.com/tags/att_a_href.asp)
-- [HTML <img> src Attribute](https://www.w3schools.com/tags/att_img_src.asp)
+- [HTML `a` href Attribute](https://www.w3schools.com/tags/att_a_href.asp)
+- [HTML `img` src Attribute](https://www.w3schools.com/tags/att_img_src.asp)
 - [Markdown format](https://www.markdownguide.org/basic-syntax/)
 - [mistune](https://github.com/lepture/mistune) - Markdown to HTML conversion
 
