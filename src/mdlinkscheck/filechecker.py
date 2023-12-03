@@ -247,6 +247,19 @@ def convert_header_to_bitbucket_target(header_label):
     # bitbucket adds prefix to all section elements
     target = header_label.lower()
     target = target.replace(" ", "-")
+    target = target.replace(",", "")
+    target = target.replace(".", "")
+    target = target.replace("(", "")
+    target = target.replace(")", "")
+
+    # reduce dashes
+    while True:
+        new_target = target.replace("--", "-")
+        if new_target == target:
+            # no progress - break
+            break
+        target = new_target
+
     return f"markdown-header-{target}"
 
 
