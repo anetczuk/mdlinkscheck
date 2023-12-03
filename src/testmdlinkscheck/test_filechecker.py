@@ -37,3 +37,10 @@ class FileCheckerTest(unittest.TestCase):
 
         valid = checker.checkMarkdown()
         self.assertTrue(valid)
+
+    def test_checkMarkdown_bitbucket(self):
+        file_path = get_data_path("bitbucket.md")
+        checker = FileChecker(file_path)
+
+        valid = checker.checkMarkdown()
+        self.assertTrue(valid)
