@@ -22,6 +22,15 @@ class FileCheckerTest(unittest.TestCase):
         links = checker.extractHyperlinks()
         self.assertSetEqual(links, set())
 
+    def test_extract_codeblock(self):
+        file_path = get_data_path("fenced_code_block.md")
+        checker = FileChecker(file_path)
+
+        result_set = set(["https://www.markdownguide.org/extended-syntax/#fenced-code-blocks"])
+
+        links = checker.extractHyperlinks()
+        self.assertSetEqual(links, result_set)
+
     def test_checkMarkdown_multiple(self):
         file_path = get_data_path("empty.md")
         checker = FileChecker(file_path)
@@ -40,6 +49,13 @@ class FileCheckerTest(unittest.TestCase):
 
     def test_checkMarkdown_bitbucket(self):
         file_path = get_data_path("bitbucket.md")
+        checker = FileChecker(file_path)
+
+        valid = checker.checkMarkdown()
+        self.assertTrue(valid)
+
+    def test_checkMarkdown_codeblock(self):
+        file_path = get_data_path("fenced_code_block.md")
         checker = FileChecker(file_path)
 
         valid = checker.checkMarkdown()
