@@ -56,9 +56,10 @@ def filter_items(items_list, regex_list):
     return ret_list
 
 
-def main():
+def main(args=None):
     parser = argparse.ArgumentParser(description="dump tools")
     parser.add_argument("-la", "--logall", action="store_true", help="Log all messages")
+    parser.add_argument("--silence", action="store_true", help="Do not output log messages")
     parser.add_argument("-d", "--dir", action="store", help="Path to directory to search .md files and check")
     parser.add_argument("-f", "--file", action="store", help="Path to file to check")
     parser.add_argument(
@@ -69,9 +70,11 @@ def main():
         help="space separated list of regex strings applied on found files to be excluded from processing",
     )
 
-    args = parser.parse_args()
+    args = parser.parse_args(args=args)
 
-    if args.logall is True:
+    if args.silence is True:
+        pass
+    elif args.logall is True:
         logging.basicConfig()
         logging.getLogger().setLevel(logging.DEBUG)
     else:
