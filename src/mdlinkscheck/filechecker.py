@@ -32,6 +32,9 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class FileChecker:
     def __init__(self, md_path):
+        self.implicit_heading_id_github: bool = False
+        self.implicit_heading_id_bitbucket: bool = False
+
         self.md_file = md_path
         md_dir = os.path.dirname(md_path)
         self.md_dir = os.path.abspath(md_dir)
@@ -48,6 +51,12 @@ class FileChecker:
             file.write(md_content.encode("utf-8"))
             file.close()
             return FileChecker(file.name)
+
+    def setOptions(self, implicit_heading_id_github: bool = None, implicit_heading_id_bitbucket: bool = None):
+        if implicit_heading_id_github is not None:
+            self.implicit_heading_id_github = implicit_heading_id_github
+        if implicit_heading_id_bitbucket is not None:
+            self.implicit_heading_id_bitbucket = implicit_heading_id_bitbucket
 
     def _load(self):
         with open(self.md_file, "r", encoding="utf-8") as file:
@@ -70,7 +79,7 @@ class FileChecker:
         self.valid_links = set()
         self.invalid_links = set()
         if self.local_targets is None:
-            self.local_targets = get_targets(self.soup)
+            self.local_targets = self._getElementsIds()
 
     # return 'True' is everything ok, otherwise 'False'
     def checkMarkdown(self) -> bool:
@@ -171,6 +180,10 @@ class FileChecker:
             # invalid file
             return False
         checker = FileChecker(local_path)
+        checker.setOptions(
+            implicit_heading_id_github=self.implicit_heading_id_github,
+            implicit_heading_id_bitbucket=self.implicit_heading_id_bitbucket,
+        )
         checker._prepare()  # pylint: disable=protected-access
         return checker._checkLocalTarget(target_label)  # pylint: disable=protected-access
 
@@ -192,6 +205,41 @@ class FileChecker:
         # invalid target
         return False
 
+    def _getElementsIds(self):
+        # on GitHub headers are converted to targets
+        header_labels = extract_header_labels(self.soup)
+
+        # header_labels_underscore = [convert_header_to_underscore(item) for item in header_labels]
+
+        anchor_targets = set()
+        for link in self.soup.find_all("a"):
+            link_id = link.get("id")
+            if link_id:
+                anchor_targets.add(link_id)
+            link_name = link.get("name")
+            if link_name:
+                anchor_targets.add(link_name)
+
+        ret_data = set()
+        ret_data.update(anchor_targets)
+        # ret_data.update(header_labels)
+        # ret_data.update(header_labels_underscore)
+
+        if self.implicit_heading_id_github:
+            # github compatibility
+            header_labels_github = [convert_header_to_github_target(item) for item in header_labels]
+            ret_data.update(header_labels_github)
+
+        if self.implicit_heading_id_bitbucket:
+            # bitbucket compatibility
+            header_labels_bitbucket = [convert_header_to_bitbucket_target(item) for item in header_labels]
+            ret_data.update(header_labels_bitbucket)
+
+        return ret_data
+
+
+# =======================================================
+
 
 def convert_md_to_html(md_content):
     # # 'escape=False' allows to embed direct HTML code into Markdown
@@ -202,36 +250,6 @@ def convert_md_to_html(md_content):
     converter = mistune.Markdown(renderer)
     html_content = converter(md_content)
     return html_content
-
-
-def get_targets(soup):
-    # on GitHub headers are converted to targets
-    header_labels = extract_header_labels(soup)
-
-    # header_labels_underscore = [convert_header_to_underscore(item) for item in header_labels]
-
-    # github compatibility
-    header_labels_github = [convert_header_to_github_target(item) for item in header_labels]
-
-    # bitbucket compatibility
-    header_labels_bitbucket = [convert_header_to_bitbucket_target(item) for item in header_labels]
-
-    anchor_targets = set()
-    for link in soup.find_all("a"):
-        link_id = link.get("id")
-        if link_id:
-            anchor_targets.add(link_id)
-        link_name = link.get("name")
-        if link_name:
-            anchor_targets.add(link_name)
-
-    ret_data = set()
-    # ret_data.update(header_labels)
-    # ret_data.update(header_labels_underscore)
-    ret_data.update(header_labels_github)
-    ret_data.update(header_labels_bitbucket)
-    ret_data.update(anchor_targets)
-    return ret_data
 
 
 def convert_header_to_github_target(header_label):

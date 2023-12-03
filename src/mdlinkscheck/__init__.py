@@ -12,9 +12,12 @@ from mdlinkscheck.filechecker import FileChecker
 # ============================== API interface ==============================
 
 
-def verify(md_file):
+def verify(md_file, implicit_heading_github=False, implicit_heading_bitbucket=False):
     """Verify given Markdown file. Return list of invalid links (if any)."""
     checker = FileChecker(md_file)
+    checker.setOptions(
+        implicit_heading_id_github=implicit_heading_github, implicit_heading_id_bitbucket=implicit_heading_bitbucket
+    )
     checker.checkMarkdown()
     return checker.invalid_links
 

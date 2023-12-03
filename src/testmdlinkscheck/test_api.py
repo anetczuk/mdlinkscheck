@@ -77,3 +77,19 @@ class APITest(unittest.TestCase):
         result_set = set(["../image.gif", "img_girl2.jpg"])
 
         self.assertSetEqual(invalid_links_set, result_set)
+
+    def test_verify_github(self):
+        links_example_path = get_data_path("github.md")
+        invalid_links_set = verify(links_example_path, implicit_heading_github=True)
+
+        result_set = set([])
+
+        self.assertSetEqual(invalid_links_set, result_set)
+
+    def test_verify_bitbucket(self):
+        links_example_path = get_data_path("bitbucket.md")
+        invalid_links_set = verify(links_example_path, implicit_heading_bitbucket=True)
+
+        result_set = set([])
+
+        self.assertSetEqual(invalid_links_set, result_set)

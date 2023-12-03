@@ -69,6 +69,17 @@ def main(args=None):
         nargs="+",
         help="space separated list of regex strings applied on found files to be excluded from processing",
     )
+    parser.add_argument(
+        "--implicit-heading-id-github",
+        action="store_true",
+        help="Allow links to sections with implicit id as in GitHub (lowercased ids with dashes)",
+    )
+    parser.add_argument(
+        "--implicit-heading-id-bitbucket",
+        action="store_true",
+        help="Allow links to sections with implicit id as in BitBucket"
+        " (lowercased ids with dashes and 'markdown-header-' prefix)",
+    )
 
     args = parser.parse_args(args=args)
 
@@ -93,9 +104,16 @@ def main(args=None):
 
     _LOGGER.info("files to check:\n%s\n", "\n".join(md_files))
 
+    implicit_heading_github = args.implicit_heading_id_github
+    implicit_heading_bitbucket = args.implicit_heading_id_bitbucket
+
     valid = True
     for md_file in md_files:
-        if verify(md_file):
+        if verify(
+            md_file,
+            implicit_heading_github=implicit_heading_github,
+            implicit_heading_bitbucket=implicit_heading_bitbucket,
+        ):
             # found invalid links
             valid = False
     if valid is False:

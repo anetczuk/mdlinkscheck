@@ -43,6 +43,7 @@ class FileCheckerTest(unittest.TestCase):
     def test_checkMarkdown_github(self):
         file_path = get_data_path("github.md")
         checker = FileChecker(file_path)
+        checker.setOptions(implicit_heading_id_github=True)
 
         valid = checker.checkMarkdown()
         self.assertTrue(valid)
@@ -50,6 +51,7 @@ class FileCheckerTest(unittest.TestCase):
     def test_checkMarkdown_bitbucket(self):
         file_path = get_data_path("bitbucket.md")
         checker = FileChecker(file_path)
+        checker.setOptions(implicit_heading_id_bitbucket=True)
 
         valid = checker.checkMarkdown()
         self.assertTrue(valid)
