@@ -13,6 +13,7 @@ Package verifies links in Markdown files.
 - check linked images
 - handle relative and absolute links, local and external resources
 - handle links to elements
+- check if extenal URLs are reachable
 - ignore *Markdown* syntax in code blocks (*C++* lambdas syntax is simillar to *Markdown* links)
 
 

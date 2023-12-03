@@ -34,7 +34,7 @@ class APITest(unittest.TestCase):
                 "www.google.com",
                 "other_file.md",
                 "/tmp/other_file.md",
-                "..",
+                "../../..",
                 "images.md",
                 "#",
                 "#top",

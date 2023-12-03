@@ -12,12 +12,13 @@ import logging
 from typing import Set, Optional
 import tempfile
 
+import urllib
+import validators
+
 import mistune
 
 # import markdown2        # invalid conversion - converts content of code block
 # import markdown         # invalid conversion - converts content of code block
-
-import validators
 
 from bs4 import BeautifulSoup
 
@@ -34,6 +35,7 @@ class FileChecker:
     def __init__(self, md_path):
         self.implicit_heading_id_github: bool = False
         self.implicit_heading_id_bitbucket: bool = False
+        self.check_url_reachable: bool = False
 
         self.md_file = md_path
         md_dir = os.path.dirname(md_path)
@@ -52,11 +54,18 @@ class FileChecker:
             file.close()
             return FileChecker(file.name)
 
-    def setOptions(self, implicit_heading_id_github: bool = None, implicit_heading_id_bitbucket: bool = None):
+    def setOptions(
+        self,
+        implicit_heading_id_github: bool = None,
+        implicit_heading_id_bitbucket: bool = None,
+        check_url_reachable: bool = None,
+    ):
         if implicit_heading_id_github is not None:
             self.implicit_heading_id_github = implicit_heading_id_github
         if implicit_heading_id_bitbucket is not None:
             self.implicit_heading_id_bitbucket = implicit_heading_id_bitbucket
+        if check_url_reachable is not None:
+            self.check_url_reachable = check_url_reachable
 
     def _load(self):
         with open(self.md_file, "r", encoding="utf-8") as file:
@@ -120,83 +129,162 @@ class FileChecker:
             if self._checkHref(link_href):
                 # valid link
                 self.valid_links.add(link_href)
-            else:
-                _LOGGER.warning("invalid link: %s in %s", link_href, self.md_file)
-                self.invalid_links.add(link_href)
+                continue
+            # invalid
+            self.invalid_links.add(link_href)
 
     def _checkImgs(self):
         """Check <img> tag."""
+        # check is 'src' points to local file or to external valid URL
         links_list = self.extractImgs()
         for img_src in links_list:
-            if self._checkURL(img_src):
-                # valid link
+            if self._checkLocalFile(img_src):
+                # valid regular file or directory
                 self.valid_links.add(img_src)
-            else:
-                _LOGGER.warning("invalid path: %s in %s", img_src, self.md_file)
-                self.invalid_links.add(img_src)
+                continue
+            if self._checkValidURL(img_src):
+                if self._checkReachableURL(img_src):
+                    # valid url
+                    self.valid_links.add(img_src)
+                    continue
+
+            # invalid
+            _LOGGER.warning("invalid link: %s in %s", img_src, self.md_file)
+            self.invalid_links.add(img_src)
 
     def _checkHref(self, link_href):
-        if link_href == "#":
-            # "back to top" special link
-            return True
-        if link_href == "#top":
-            # "back to top" special link
-            return True
-
         if link_href.startswith("mailto:"):
             # consider "mailto" always valid
             return True
 
-        if self._checkURL(link_href):
-            # valid file
+        if self._checkLocalFile(link_href):
+            # valid local file
+            return True
+        local_dir = self._checkLocalDir(link_href)
+        if local_dir:
+            if not self._checkLocalREADME(local_dir):
+                _LOGGER.warning("invalid path (missing README.md): %s in %s", link_href, self.md_file)
+                return False
+            # valid local dir
             return True
 
-        local_path = os.path.join(self.md_dir, link_href)
-        if os.path.isdir(local_path):
-            # valid directory
+        if self._checkValidURL(link_href):
+            if not self._checkReachableURL(link_href):
+                _LOGGER.warning("invalid link (unreachable): %s in %s", link_href, self.md_file)
+                return False
+            # valid url
             return True
 
         target_data = link_href.split("#")
         if len(target_data) != 2:
             # invalid URL - there must be more than one # character
+            _LOGGER.warning("invalid link: %s in %s", link_href, self.md_file)
             return False
 
         # url with target
         target_url = target_data[0]
-        target_label = target_data[1]
-        target_label = target_label.lower()
+        target_id = target_data[1]
+        target_id = target_id.lower()
 
         if not target_url:
-            # local file
-            if self._checkLocalTarget(target_label):
-                # found local target
+            # current file
+            if target_id == "":
+                # "back to top" special link
+                return True
+            if target_id == "top":
+                # "back to top" special link
                 return True
 
-        # external file
-        local_path = os.path.join(self.md_dir, target_url)
-        if os.path.isdir(local_path):
-            local_path = os.path.join(local_path, "README.md")
-        if not os.path.isfile(local_path):
-            # invalid file
+            if self._checkLocalTarget(target_id):
+                # found local target
+                return True
+            _LOGGER.warning("invalid link: %s in %s", link_href, self.md_file)
             return False
-        checker = FileChecker(local_path)
+
+        # other file
+        local_dir = self._checkLocalDir(target_url)
+        if local_dir:
+            # links to directory - check if README.md exists
+            local_file = self._checkLocalREADME(local_dir)
+            if not local_file:
+                # invalid file - missing README.md
+                _LOGGER.warning("invalid path (missing README.md): %s in %s", link_href, self.md_file)
+                return False
+        else:
+            local_file = self._checkLocalFile(target_url)
+            if not local_file:
+                # invalid file - missing README.md
+                _LOGGER.warning("invalid path: %s in %s", link_href, self.md_file)
+                return False
+
+        # here 'local_file' points to valid file
+
+        if target_id == "":
+            # "back to top" special link
+            return True
+        if target_id == "top":
+            # "back to top" special link
+            return True
+
+        checker = FileChecker(local_file)
         checker.setOptions(
             implicit_heading_id_github=self.implicit_heading_id_github,
             implicit_heading_id_bitbucket=self.implicit_heading_id_bitbucket,
+            check_url_reachable=self.check_url_reachable,
         )
         checker._prepare()  # pylint: disable=protected-access
-        return checker._checkLocalTarget(target_label)  # pylint: disable=protected-access
+        if not checker._checkLocalTarget(target_id):  # pylint: disable=protected-access
+            _LOGGER.warning("invalid link: %s in %s", link_href, self.md_file)
+            return False
+        return True
 
-    def _checkURL(self, file_href):
-        if validators.url(file_href):
-            # valid link
-            return True
-        local_path = os.path.join(self.md_dir, file_href)
-        if os.path.isfile(local_path):
+    def _checkLocalFile(self, path):
+        if os.path.isfile(path):
             # valid file
+            return path
+        rel_path = os.path.join(self.md_dir, path)
+        if os.path.isfile(rel_path):
+            # valid file
+            return rel_path
+        return None
+
+    def _checkLocalREADME(self, dir_path):
+        # links to directory - check if README.md exists
+        local_file = os.path.join(dir_path, "README.md")
+        local_file = self._checkLocalFile(local_file)
+        if not local_file:
+            # invalid file - missing README.md
+            return None
+        return local_file
+
+    def _checkLocalDir(self, path):
+        if os.path.isdir(path):
+            # valid directory
+            return path
+        rel_path = os.path.join(self.md_dir, path)
+        if os.path.isdir(rel_path):
+            # valid directory
+            return path
+        return None
+
+    def _checkValidURL(self, file_href):
+        if not validators.url(file_href):
+            # invalid
+            return False
+        # valid link
+        return True
+
+    def _checkReachableURL(self, url):
+        if not self.check_url_reachable:
+            # do not check
             return True
-        # invalid
-        return False
+        try:
+            with urllib.request.urlopen(url) as response:  # nosec B310
+                return response.getcode() == 200
+        except urllib.request.HTTPError:
+            return False
+        except urllib.request.URLError:
+            return False
 
     def _checkLocalTarget(self, target_label):
         if target_label in self.local_targets:

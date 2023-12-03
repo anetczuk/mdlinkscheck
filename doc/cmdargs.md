@@ -3,6 +3,7 @@
 usage: checkmdlinks.py [-h] [-la] [--silence] [-d DIR] [-f N [N ...]]
                        [--excludes N [N ...]] [--implicit-heading-id-github]
                        [--implicit-heading-id-bitbucket]
+                       [--check-url-reachable]
 
 check links in Markdown
 
@@ -23,4 +24,6 @@ optional arguments:
                         Allow links to sections with implicit id as in
                         BitBucket (lowercased ids with dashes and 'markdown-
                         header-' prefix)
+  --check-url-reachable
+                        Check if external URLs are reachable
 ```

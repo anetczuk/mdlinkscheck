@@ -11,7 +11,7 @@ All those links are valid acording to https://www.w3schools.com/tags/att_a_href.
 
 [local valid relative file](images.md)
 
-[local relative directory with implicit README.md](..)
+[local relative directory with implicit README.md](../../..)
 
 [local invalid absolute file](/tmp/other_file.md)
 

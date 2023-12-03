@@ -84,6 +84,7 @@ def main(args=None):
         help="Allow links to sections with implicit id as in BitBucket"
         " (lowercased ids with dashes and 'markdown-header-' prefix)",
     )
+    parser.add_argument("--check-url-reachable", action="store_true", help="Check if external URLs are reachable")
 
     args = parser.parse_args(args=args)
 
@@ -108,15 +109,13 @@ def main(args=None):
 
     _LOGGER.info("files to check:\n%s\n", "\n".join(md_files))
 
-    implicit_heading_github = args.implicit_heading_id_github
-    implicit_heading_bitbucket = args.implicit_heading_id_bitbucket
-
     valid = True
     for md_file in md_files:
         if verify(
             md_file,
-            implicit_heading_github=implicit_heading_github,
-            implicit_heading_bitbucket=implicit_heading_bitbucket,
+            implicit_heading_github=args.implicit_heading_id_github,
+            implicit_heading_bitbucket=args.implicit_heading_id_bitbucket,
+            check_url_reachable=args.check_url_reachable,
         ):
             # found invalid links
             valid = False

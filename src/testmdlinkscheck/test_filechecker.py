@@ -31,6 +31,24 @@ class FileCheckerTest(unittest.TestCase):
         links = checker.extractHyperlinks()
         self.assertSetEqual(links, result_set)
 
+    def test_checkMarkdown_invalid_local(self):
+        checker = FileChecker.initializeByContent("[link](non_existing_file.md)")
+        valid = checker.checkMarkdown()
+        self.assertFalse(valid)
+
+    def test_checkMarkdown_external_valid(self):
+        # do not check if URL is reachable
+        checker = FileChecker.initializeByContent("[link](http://www.non_existing_website.non_existing)")
+        valid = checker.checkMarkdown()
+        self.assertTrue(valid)
+
+    def test_checkMarkdown_external_invalid(self):
+        # check if URL is reachable
+        checker = FileChecker.initializeByContent("[link](http://www.non_existing_website.non_existing)")
+        checker.setOptions(check_url_reachable=True)
+        valid = checker.checkMarkdown()
+        self.assertFalse(valid)
+
     def test_checkMarkdown_multiple(self):
         file_path = get_data_path("empty.md")
         checker = FileChecker(file_path)
