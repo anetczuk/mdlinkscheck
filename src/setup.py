@@ -28,7 +28,7 @@ packages_list = find_packages(include=["mdlinkscheck", "mdlinkscheck.*"])
 packages_data: Dict[str, Any] = {"mdlinkscheck": []}
 
 ## additional scripts to install
-additional_scripts: List[str] = []
+additional_scripts: List[str] = ["checkmdlinks.py"]
 
 requirements_path = os.path.join(SCRIPT_DIR, "requirements.txt")
 install_reqs = read_list(requirements_path)
