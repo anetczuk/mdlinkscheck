@@ -208,8 +208,11 @@ def get_targets(soup):
     # on GitHub headers are converted to targets
     header_labels = extract_header_labels(soup)
 
-    header_labels_dashes = [convert_header_to_dashes(item) for item in header_labels]
     # header_labels_underscore = [convert_header_to_underscore(item) for item in header_labels]
+
+    # github compatibility
+    header_labels_github = [convert_header_to_github_target(item) for item in header_labels]
+
     # bitbucket compatibility
     header_labels_bitbucket = [convert_header_to_bitbucket_target(item) for item in header_labels]
 
@@ -224,16 +227,20 @@ def get_targets(soup):
 
     ret_data = set()
     # ret_data.update(header_labels)
-    ret_data.update(header_labels_dashes)
     # ret_data.update(header_labels_underscore)
+    ret_data.update(header_labels_github)
     ret_data.update(header_labels_bitbucket)
     ret_data.update(anchor_targets)
     return ret_data
 
 
-def convert_header_to_dashes(header_label):
+def convert_header_to_github_target(header_label):
     target = header_label.lower()
     target = target.replace(" ", "-")
+    target = target.replace(",", "")
+    target = target.replace(".", "")
+    target = target.replace("(", "")
+    target = target.replace(")", "")
     return target
 
 

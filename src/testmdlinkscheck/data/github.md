@@ -20,6 +20,11 @@ element id will contain additional dash in front.
 Subsection with long name.
 
 
+## Section with comma, other comma, and . here and ( and ) too
+
+Subsection with commas, dots and other special characters.
+
+
 ## Links
 
 All following element links are valid on GitHub:
@@ -30,6 +35,7 @@ All following element links are valid on GitHub:
 - [link 4](#named-subsection) - standard link to section with name tag 
 - [link 5](#long-named-subsection) - lowercase long name with dashes
 - [link 6](#Long-named-subsection) - long name with dashes
-- <a href="#long-named-subsection">link 7</a> - direct HTML link to element
+- [link 7](#section-with-comma-other-comma-and--here-and--and--too) - section with commas and dots
+- <a href="#long-named-subsection">link 8</a> - direct HTML link to element
 
 GitHub is not case sensitive.
