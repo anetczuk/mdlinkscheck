@@ -2,13 +2,13 @@
 
 Simple things can be difficult. Links can be complicated. With this package headache no more.
 
-Package verifies links in Markdown files.
+Package verifies links in Markdown files. Typical use case is to verify *Markdown* files stored locally (e.g. as part of
+project's documentation in repository).
 
 
 ## Features
 
 - find Markdown files in subdirectories
-- walk through linked Markdown files
 - check standard links
 - check linked images
 - handle relative and absolute links, local and external resources
@@ -19,11 +19,16 @@ Package verifies links in Markdown files.
 
 ## Running
 
-[There](doc/cmdargs.md) is description of command line arguments. To simple run execute:
+[There](doc/cmdargs.md) is description of command line arguments. To simple run execute (dedicated script):
 ```
 checkmdlinks.py --dir <path-to-dir-with-MD-files>
 ```
-Application then will go recursively and look for `.md` files and validate them. Other options include passing
+or run as module:
+```
+python3 -m mdlinkscheck --dir <path-to-dir-with-MD-files>
+```
+Application then will go recursively and look for `.md` files and validate them. By passing `-f` with list of
+files there is possibility to run the check against given files only. Other options include passing
 particular files and setting compatibility mode with *GitHub* or *BitBucket* version of *Markdown*.
 
 

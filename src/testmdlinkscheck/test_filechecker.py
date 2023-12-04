@@ -49,6 +49,13 @@ class FileCheckerTest(unittest.TestCase):
         valid = checker.checkMarkdown()
         self.assertFalse(valid)
 
+    def test_checkMarkdown_external_with_element(self):
+        # it happened that valid URL had '#' and '/' at end of the address
+        checker = FileChecker.initializeByContent("[link](http://www.google.com#target-element/)")
+        checker.setOptions(check_url_reachable=True)
+        valid = checker.checkMarkdown()
+        self.assertTrue(valid)
+
     def test_checkMarkdown_multiple(self):
         file_path = get_data_path("empty.md")
         checker = FileChecker(file_path)

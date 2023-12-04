@@ -12,7 +12,7 @@ import logging
 from typing import Set, Optional
 import tempfile
 
-import urllib
+import requests
 import validators
 
 import mistune
@@ -201,6 +201,13 @@ class FileChecker:
             _LOGGER.warning("invalid link: %s in %s", link_href, self.md_file)
             return False
 
+        if self._checkValidURL(target_url):
+            if not self._checkReachableURL(target_url):
+                _LOGGER.warning("invalid link (unreachable): %s in %s", link_href, self.md_file)
+                return False
+            # valid url
+            return True
+
         # other file
         local_dir = self._checkLocalDir(target_url)
         if local_dir:
@@ -278,12 +285,11 @@ class FileChecker:
         if not self.check_url_reachable:
             # do not check
             return True
+
         try:
-            with urllib.request.urlopen(url) as response:  # nosec B310
-                return response.getcode() == 200
-        except urllib.request.HTTPError:
-            return False
-        except urllib.request.URLError:
+            response = requests.get(url)
+            return response.status_code == 200
+        except requests.exceptions.ConnectionError:
             return False
 
     def _checkLocalTarget(self, target_label):

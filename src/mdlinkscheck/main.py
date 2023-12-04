@@ -109,19 +109,18 @@ def main(args=None):
 
     _LOGGER.info("files to check:\n%s\n", "\n".join(md_files))
 
-    valid = True
+    invalid_count = 0
     for md_file in md_files:
-        if verify(
+        invalid_links = verify(
             md_file,
             implicit_heading_github=args.implicit_heading_id_github,
             implicit_heading_bitbucket=args.implicit_heading_id_bitbucket,
             check_url_reachable=args.check_url_reachable,
-        ):
-            # found invalid links
-            valid = False
-    if valid is False:
+        )
+        invalid_count += len(invalid_links)
+    if invalid_count > 0:
         # errors found
-        _LOGGER.info("found invalid links")
+        _LOGGER.info("found %s invalid links", invalid_count)
         return 1
 
     # everything fine
