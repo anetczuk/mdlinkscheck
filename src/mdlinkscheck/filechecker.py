@@ -287,7 +287,7 @@ class FileChecker:
             return True
 
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=15)
             return response.status_code == 200
         except requests.exceptions.ConnectionError:
             return False

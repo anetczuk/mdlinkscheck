@@ -40,6 +40,18 @@ local file or external resource. Moreover links can contain e-mail address (`mai
 element links can point to implicit elements (*GitHub* does it in it's own way, *bitbucket* does it in different way).
 
 
+## Development
+
+There are couple of helpfull scripts to run:
+- `src/install-deps.sh` - installation of dependencies
+- `src/install-package.sh` - installation of package (normal mode)
+- `src/install-devel.sh` - installation of package in editable mode
+- `src/testmdlinkscheck/runtests.py` - runner for unit tests
+- `tools/checkall.sh` - execute static code checks against source code
+- `tools/installvenv.sh` - prepare venv with package
+- `process-all.sh` - run all tests (in venv), generators and code checks
+
+
 ## Similar projects
 
 - [linkcheckmd](https://github.com/scivision/linkchecker-markdown) - does not validate links to element

@@ -7,7 +7,9 @@ set -eu
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 
 
-$SCRIPT_DIR/src/testmdlinkscheck/runtests.py
+# run tests in venv (it verifies required packages)
+$SCRIPT_DIR/tools/installvenv.sh --no-prompt
+$SCRIPT_DIR/venv/runtests.py
 
 $SCRIPT_DIR/tools/checkall.sh
 

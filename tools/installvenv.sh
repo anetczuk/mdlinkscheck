@@ -8,9 +8,27 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 SRC_DIR=$(realpath "$SCRIPT_DIR/../src")
 
 
+ARGS=()
+NO_PROMPT=false
+
+while :; do
+    if [ -z "${1+x}" ]; then
+        ## end of arguments (prevents unbound argument error)
+        break
+    fi
+
+    case "$1" in
+      --no-prompt)  NO_PROMPT=true 
+                    shift ;;
+      *)  ARGS+=($1)
+          shift ;;
+    esac
+done
+
+
 VENV_SUBDIR=""
-if [ "$#" -ge 1 ]; then
-    VENV_SUBDIR=$1
+if [ "${#ARGS[@]}" -gt 0 ]; then
+    VENV_SUBDIR=${ARGS[0]}
 fi
 
 VENV_DIR="$SCRIPT_DIR/../venv/$VENV_SUBDIR"
@@ -19,11 +37,13 @@ VENV_DIR="$SCRIPT_DIR/../venv/$VENV_SUBDIR"
 ### if directory exists then prompt to delete
 
 if [ -d "$VENV_DIR" ]; then
-    read -p "Directory [$VENV_DIR] exists. Do You want to remove it (y/N)? " -n 1 -r
-    echo    # (optional) move to a new line
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "Given target directory [$VENV_DIR] exists, remove it and restart the script"
-        exit 1
+    if [ "$NO_PROMPT" = false ]; then
+        read -p "Directory [$VENV_DIR] exists. Do You want to remove it (y/N)? " -n 1 -r
+        echo    # (optional) move to a new line
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "Given target directory [$VENV_DIR] exists, remove it and restart the script"
+            exit 1
+        fi
     fi
     # do dangerous stuff
     echo "Removing directory [$VENV_DIR]"
@@ -128,7 +148,12 @@ set -eu
 ### creating project start script
 create_venv_shortcut "$VENV_DIR/activatevenv.sh \"$SRC_DIR/checkmdlinks.py \$@; exit\"" "$VENV_DIR/checkmdlinks.py"
 
+create_venv_shortcut "$VENV_DIR/activatevenv.sh \"$SRC_DIR/testmdlinkscheck/runtests.py \$@; exit\"" "$VENV_DIR/runtests.py"
+
 
 ### install required packages
 echo "Installing dependencies"
-$START_VENV_SCRIPT_PATH "$SCRIPT_DIR/../src/install-deps.sh"
+$START_VENV_SCRIPT_PATH "$SCRIPT_DIR/../src/install-deps.sh; exit"
+
+
+echo "to activate environment run: $VENV_DIR/activatevenv.sh"
