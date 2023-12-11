@@ -68,8 +68,12 @@ class FileChecker:
             self.check_url_reachable = check_url_reachable
 
     def _load(self):
-        with open(self.md_file, "r", encoding="utf-8") as file:
-            md_content = file.read()
+        try:
+            with open(self.md_file, "r", encoding="utf-8") as file:
+                md_content = file.read()
+        except FileNotFoundError as exc:
+            _LOGGER.warning("could not open md file: %s", exc)
+            return
 
         tmp_dir = tempfile.gettempdir()
         tmp_dir = os.path.join(tmp_dir, "mdlinkscheck")
@@ -98,6 +102,9 @@ class FileChecker:
         self._checkImgs()
 
         return len(self.invalid_links) == 0
+
+    def checkURLReachable(self, url):
+        return self._checkReachableURL(url)
 
     def extractHyperlinks(self) -> Set[str]:
         ret_set = set()
@@ -287,7 +294,10 @@ class FileChecker:
             return True
 
         try:
-            response = requests.get(url, timeout=15)
+            headers = {
+                'User-Agent': 'My User Agent 1.0'
+            }
+            response = requests.head(url, timeout=15, headers=headers, allow_redirects=True)
             return response.status_code == 200
         except requests.exceptions.ConnectionError:
             return False

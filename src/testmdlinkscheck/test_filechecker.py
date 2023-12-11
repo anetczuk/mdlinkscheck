@@ -87,3 +87,17 @@ class FileCheckerTest(unittest.TestCase):
 
         valid = checker.checkMarkdown()
         self.assertTrue(valid)
+
+    # def test_checkURLReachable_github(self):
+    #     checker = FileChecker("")
+    #     checker.setOptions(check_url_reachable=True)
+    #
+    #     valid = checker.checkURLReachable("https://github.com/anetczuk/ros-diagram-tools")
+    #     self.assertTrue(valid)
+    #
+    # def test_checkURLReachable_sick(self):
+    #     checker = FileChecker("")
+    #     checker.setOptions(check_url_reachable=True)
+    #
+    #     valid = checker.checkURLReachable("http://www.sick.com/")
+    #     self.assertTrue(valid)
