@@ -11,6 +11,7 @@ import os
 import logging
 from typing import Set, Optional
 import tempfile
+import hashlib
 
 import requests
 import validators
@@ -80,10 +81,13 @@ class FileChecker:
         os.makedirs(tmp_dir, exist_ok=True)
         tmp_path = self.md_file.replace("/", "_")
         tmp_path = tmp_path.replace("\\", "_")
-        tmp_path = f"{tmp_dir}/page_{tmp_path}.html"
+
+        encoded_path = tmp_path.encode("utf-8")
+        hash_value = hashlib.md5(encoded_path).hexdigest()  # nosec
+        hash_path = f"{tmp_dir}/page_{hash_value}.html"
 
         html_content = convert_md_to_html(md_content)
-        with open(tmp_path, "w", encoding="utf-8") as file:
+        with open(hash_path, "w", encoding="utf-8") as file:
             file.write(html_content)
 
         self.soup = BeautifulSoup(html_content, "html.parser")
@@ -294,10 +298,9 @@ class FileChecker:
             return True
 
         try:
-            headers = {
-                'User-Agent': 'My User Agent 1.0'
-            }
+            headers = {"User-Agent": "My User Agent 1.0"}
             response = requests.head(url, timeout=15, headers=headers, allow_redirects=True)
+            # _LOGGER.info("link %s response code: %s", url, response.status_code)
             return response.status_code == 200
         except requests.exceptions.ConnectionError:
             return False
