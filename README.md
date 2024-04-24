@@ -19,7 +19,7 @@ project's documentation in repository).
 
 ## Running
 
-[There](doc/cmdargs.md) is description of command line arguments. To simple run execute (dedicated script):
+[There](/doc/cmdargs.md) is description of command line arguments. To simple run execute (dedicated script):
 ```
 checkmdlinks.py --dir <path-to-dir-with-MD-files>
 ```

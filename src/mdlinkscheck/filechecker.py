@@ -260,6 +260,26 @@ class FileChecker:
         if os.path.isfile(path):
             # valid file
             return path
+
+        if os.path.isabs(path):
+            # in Markdown there can be absolute path to file
+            # the path then will be relative to repositoy's root directory
+            # workaround: iterate all path parents and try if file exists
+            relative_path = "." + path
+            curr_path = self.md_dir
+            while True:
+                rel_path = os.path.join(curr_path, relative_path)
+                if os.path.isfile(rel_path):
+                    # valid file
+                    return rel_path
+
+                next_path = os.path.join(curr_path, os.pardir)
+                next_path = os.path.normpath(next_path)
+                if curr_path == next_path:
+                    # end of iterations root dir reached
+                    break
+                curr_path = next_path
+
         rel_path = os.path.join(self.md_dir, path)
         if os.path.isfile(rel_path):
             # valid file

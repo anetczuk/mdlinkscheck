@@ -88,6 +88,7 @@ class FileCheckerTest(unittest.TestCase):
         valid = checker.checkMarkdown()
         self.assertTrue(valid)
 
+    # TODO: integration tests checking if real URLs are reachable
     # def test_checkURLReachable_github(self):
     #     checker = FileChecker("")
     #     checker.setOptions(check_url_reachable=True)
@@ -100,4 +101,25 @@ class FileCheckerTest(unittest.TestCase):
     #     checker.setOptions(check_url_reachable=True)
     #
     #     valid = checker.checkURLReachable("http://www.sick.com/")
+    #     self.assertTrue(valid)
+    #
+    # def test_checkURLReachable_ti(self):
+    #     checker = FileChecker("")
+    #     checker.setOptions(check_url_reachable=True)
+    #
+    #     valid = checker.checkURLReachable("http://e2e.ti.com/support/arm/sitara_arm/f/791/t/277952")
+    #     self.assertTrue(valid)
+    #
+    # def test_checkURLReachable_appveyor(self):
+    #     checker = FileChecker("")
+    #     checker.setOptions(check_url_reachable=True)
+    #
+    #     valid = checker.checkURLReachable("https://ci.appveyor.com/api/projects/status/riaj54pn4h08xy40?svg=true")
+    #     self.assertTrue(valid)
+    #
+    # def test_checkURLReachable_epfl(self):
+    #     checker = FileChecker("")
+    #     checker.setOptions(check_url_reachable=True)
+    #
+    #     valid = checker.checkURLReachable("http://rgl.epfl.ch/people/wjakob")
     #     self.assertTrue(valid)

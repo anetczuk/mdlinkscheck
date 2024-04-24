@@ -146,9 +146,9 @@ set -eu
 
 
 ### creating project start script
-create_venv_shortcut "$VENV_DIR/activatevenv.sh \"$SRC_DIR/checkmdlinks.py \$@; exit\"" "$VENV_DIR/checkmdlinks.py"
+create_venv_shortcut "$VENV_DIR/activatevenv.sh \"set -eu; $SRC_DIR/checkmdlinks.py \$@; exit\"" "$VENV_DIR/checkmdlinks.py"
 
-create_venv_shortcut "$VENV_DIR/activatevenv.sh \"$SRC_DIR/testmdlinkscheck/runtests.py \$@; exit\"" "$VENV_DIR/runtests.py"
+create_venv_shortcut "$VENV_DIR/activatevenv.sh \"set -eu; $SRC_DIR/testmdlinkscheck/runtests.py \$@; exit\"" "$VENV_DIR/runtests.py"
 
 
 ### install required packages

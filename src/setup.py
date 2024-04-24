@@ -37,7 +37,7 @@ install_reqs = read_list(requirements_path)
 
 setup(
     name="mdlinkscheck",
-    version="1.0.1",
+    version="1.0.2",
     description="verify links in Markdown files",
     url="https://github.com/anetczuk/mdlinkscheck",
     author="Arkadiusz Netczuk",
