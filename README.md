@@ -32,6 +32,19 @@ files there is possibility to run the check against given files only. Other opti
 particular files and setting compatibility mode with *GitHub* or *BitBucket* version of *Markdown*.
 
 
+## Installation
+
+Installation of package can be done by:
+ - to install package from downloaded ZIP file execute: `pip3 install --user -I file:mdlinkcheck-master.zip#subdirectory=src`
+ - to install package directly from GitHub execute: `pip3 install --user -I git+https://github.com/anetczuk/mdlinkcheck.git#subdirectory=src`
+ - uninstall: `pip3 uninstall mdlinkcheck`
+
+Installation For development:
+ - `install-deps.sh` to install package dependencies only (`requirements.txt`)
+ - `install-package.sh` to install package in standard way through `pip` (with dependencies)
+ - `install-devel.sh` to install package in developer mode using `pip` (with dependencies)
+
+
 ## How it works?
 
 Library simply converts *Markdown* to *HTML* and then extracts links using *BeautifulSoup*. After that links are
