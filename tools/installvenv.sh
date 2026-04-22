@@ -10,6 +10,7 @@ SRC_DIR=$(realpath "$SCRIPT_DIR/../src")
 
 ARGS=()
 NO_PROMPT=false
+DEV_MODE=false
 
 while :; do
     if [ -z "${1+x}" ]; then
@@ -20,7 +21,9 @@ while :; do
     case "$1" in
       --no-prompt)  NO_PROMPT=true 
                     shift ;;
-      *)  ARGS+=($1)
+      --dev)        DEV_MODE=true 
+                    shift ;;
+      *)  ARGS+=("$1")
           shift ;;
     esac
 done
@@ -58,14 +61,13 @@ VENV_DIR=$(realpath "$VENV_DIR")
 
 echo "Creating virtual environment in $VENV_DIR"
 
-python3.8 -m venv $VENV_DIR
-# python3 -m venv $VENV_DIR
-# python2 -m virtualenv $VENV_DIR
+python3 -m venv "$VENV_DIR"
 
 
 ### creating venv start script
 
-SCRIPT_CONTENT='#!/bin/bash
+# shellcheck disable=SC2016
+ACTIVATE_VENV_CONTENT='#!/bin/bash
 
 ##
 ## File was generated automatically. Any change will be lost. 
@@ -78,47 +80,44 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 VENV_DIR="$VENV_ROOT_DIR"
 
 
-START_COMMAND=
-if [ "$#" -ge 1 ]; then
-    START_COMMAND=$(cat <<EOL
-## executing command
-echo "executing: $@"
-eval "$@"
-EOL
-)
+if [ "$#" -eq 0 ]; then
+    ##
+    ## command not given - start virtual environment in interactive mode
+    ##
+
+    set +e      ## prevent closing interactive session in case of error of any command
+    echo "Starting virtual env"
+    ## `exec < /dev/tty` prevents immediate exit from interactive mode
+    bash -i <<< "source $VENV_DIR/bin/activate && exec < /dev/tty"
+    exit 0
 fi
 
 
-### create temporary file
-tmpfile=$(mktemp venv.run.XXXXXX.sh --tmpdir)
+##
+## running given command inside virtual environment
+##
 
-### write content to temporary
-cat > $tmpfile <<EOL
+bash <<EOL
 source $VENV_DIR/bin/activate
 if [ \$? -ne 0 ]; then
     echo -e "Unable to activate virtual environment, exiting"
     exit 1
 fi
 
-$START_COMMAND
+set -e
 
-exec </dev/tty 
+## executing command
+echo "Executing inside venv: $@"
+eval "$@"
+
 EOL
-
-
-echo "Starting virtual env"
-
-bash -i <<< "source $tmpfile"
-
-
-rm $tmpfile
 '
 
-SCRIPT_CONTENT="${SCRIPT_CONTENT//'$VENV_ROOT_DIR'/$VENV_DIR}"
-SCRIPT_PATH="$VENV_DIR/activatevenv.sh"
-START_VENV_SCRIPT_PATH="$SCRIPT_PATH"
-echo "$SCRIPT_CONTENT" > "$SCRIPT_PATH"
-chmod +x "$SCRIPT_PATH"
+# shellcheck disable=SC2016
+ACTIVATE_VENV_CONTENT="${ACTIVATE_VENV_CONTENT//'$VENV_ROOT_DIR'/$VENV_DIR}"
+ACTIVATE_VENV_PATH="$VENV_DIR/activatevenv.sh"
+echo "$ACTIVATE_VENV_CONTENT" > "$ACTIVATE_VENV_PATH"
+chmod +x "$ACTIVATE_VENV_PATH"
 
 
 ## create shortcut script inside venv directory
@@ -130,7 +129,7 @@ create_venv_shortcut() {
     
     local SCRIPT_CONTENT='#!/bin/bash
 ##
-## File was generated automatically. Any change will be lost. 
+## File was generated automatically using "installvenv.sh" script. Any change will be lost. 
 ##
 
 set -eu
@@ -145,15 +144,37 @@ set -eu
 }
 
 
-### creating project start script
-create_venv_shortcut "$VENV_DIR/activatevenv.sh \"set -eu; $SRC_DIR/checkmdlinks.py \$@; exit\"" "$VENV_DIR/checkmdlinks.py"
+## create package starter
+for dir in "${SRC_DIR}"/*/; do
+    if [[ -f "${dir}__main__.py" ]]; then
+        package_name=$(basename "${dir}")
+        starter_path="${VENV_DIR}/start${package_name}.sh"
+        create_venv_shortcut "$VENV_DIR/activatevenv.sh \"set -eu; python3 -m ${package_name} \$@\"" "${starter_path}"
+    fi
+done
 
-create_venv_shortcut "$VENV_DIR/activatevenv.sh \"set -eu; $SRC_DIR/testmdlinkscheck/runtests.py \$@; exit\"" "$VENV_DIR/runtests.py"
+## create tests starter
+for dir in "${SRC_DIR}"/*/; do
+    TEST_SCRIPT="${dir}/runtests.py"
+    if [[ -f "${TEST_SCRIPT}" ]]; then
+        package_name=$(basename "${dir}")
+        starter_path="${VENV_DIR}/runtests-${package_name}.sh"
+        create_venv_shortcut "$VENV_DIR/activatevenv.sh \"set -eu; ${TEST_SCRIPT} \$@\"" "${starter_path}"
+    fi
+done
 
 
 ### install required packages
-echo "Installing dependencies"
-$START_VENV_SCRIPT_PATH "$SCRIPT_DIR/../src/install-deps.sh; exit"
+
+echo "Installing project and dependencies"
+
+$ACTIVATE_VENV_PATH "python3 -m pip install --upgrade pip"
+
+if [ "$DEV_MODE" = false ]; then
+    $ACTIVATE_VENV_PATH "$SCRIPT_DIR/../src/install-app.sh"
+else
+    $ACTIVATE_VENV_PATH "$SCRIPT_DIR/../src/install-app.sh --dev"
+fi
 
 
-echo "to activate environment run: $VENV_DIR/activatevenv.sh"
+echo "To activate environment run: $VENV_DIR/activatevenv.sh"
