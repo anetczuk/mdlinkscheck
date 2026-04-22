@@ -26,7 +26,6 @@ import unittest
 import re
 import argparse
 
-
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # src_dir = os.path.abspath(os.path.join(SCRIPT_DIR, ".."))

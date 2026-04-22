@@ -8,7 +8,6 @@
 
 from mdlinkscheck.filechecker import FileChecker
 
-
 # ============================== API interface ==============================
 
 

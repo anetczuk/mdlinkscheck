@@ -7,12 +7,12 @@
 
 import unittest
 import logging
+from typing import Any
 
 from mdlinkscheck import extract_links, extract_hyperlinks, extract_imgs
 from mdlinkscheck import verify
 
 from testmdlinkscheck.data import get_data_path
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -82,7 +82,7 @@ class APITest(unittest.TestCase):
         links_example_path = get_data_path("github.md")
         invalid_links_set = verify(links_example_path, implicit_heading_github=True)
 
-        result_set = set([])
+        result_set: set[Any] = set([])
 
         self.assertSetEqual(invalid_links_set, result_set)
 
@@ -90,6 +90,6 @@ class APITest(unittest.TestCase):
         links_example_path = get_data_path("bitbucket.md")
         invalid_links_set = verify(links_example_path, implicit_heading_bitbucket=True)
 
-        result_set = set([])
+        result_set: set[Any] = set([])
 
         self.assertSetEqual(invalid_links_set, result_set)

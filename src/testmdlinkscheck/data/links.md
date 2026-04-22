@@ -1,6 +1,6 @@
 # example with links
 
-All those links are valid acording to https://www.w3schools.com/tags/att_a_href.asp
+All those links are valid according to https://www.w3schools.com/tags/att_a_href.asp
 
 
 [absolute URL](www.google.com)

@@ -20,7 +20,6 @@ from glob import glob
 
 from mdlinkscheck import verify
 
-
 _LOGGER = logging.getLogger(__name__)
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))

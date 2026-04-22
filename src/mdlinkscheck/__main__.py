@@ -15,7 +15,6 @@
 import sys
 from mdlinkscheck.main import main
 
-
 if __name__ == "__main__":
     EXIT_CODE = main()
     sys.exit(EXIT_CODE)

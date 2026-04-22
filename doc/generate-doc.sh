@@ -13,16 +13,23 @@ SRC_DIR="$SCRIPT_DIR/../src"
 generate_help() {
     echo "generating help output"
 
-    HELP_PATH=$SCRIPT_DIR/cmdargs.md
+    HELP_PATH="${SCRIPT_DIR}"/cmdargs.md
     
-    echo "## checkmdlinks.py --help" > ${HELP_PATH}
-    echo -e "\`\`\`" >> ${HELP_PATH}
-    $SRC_DIR/checkmdlinks.py --help >> ${HELP_PATH}
-    echo -e "\`\`\`" >> ${HELP_PATH}
+    cd "$SRC_DIR"
+    
+    COMMAND="python3 -m mdlinkscheck"
+    COMMAND_TEXT="checkmdlinks"
+    
+    echo "## $COMMAND_TEXT --help" > "${HELP_PATH}"
+    echo -e "\`\`\`" >> "${HELP_PATH}"
+    $COMMAND --help >> "${HELP_PATH}"
+    echo -e "\`\`\`" >> "${HELP_PATH}"
+    
+    sed -i "s/__main__.py/${COMMAND_TEXT}/g" "${HELP_PATH}"
 }
 
 
 generate_help
 
 
-$SCRIPT_DIR/generate_small.sh
+"${SCRIPT_DIR}"/generate_small.sh

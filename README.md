@@ -13,8 +13,8 @@ project's documentation in repository).
 - check linked images
 - handle relative and absolute links, local and external resources
 - handle links to elements
-- check if extenal URLs are reachable
-- ignore *Markdown* syntax in code blocks (*C++* lambdas syntax is simillar to *Markdown* links)
+- check if external URLs are reachable
+- ignore *Markdown* syntax in code blocks (*C++* lambdas syntax is similar to *Markdown* links)
 
 
 ## Running
@@ -55,7 +55,7 @@ element links can point to implicit elements (*GitHub* does it in it's own way, 
 
 ## Development
 
-There are couple of helpfull scripts to run:
+There are couple of helpful scripts to run:
 - `src/install-deps.sh` - installation of dependencies
 - `src/install-package.sh` - installation of package (normal mode)
 - `src/install-devel.sh` - installation of package in editable mode

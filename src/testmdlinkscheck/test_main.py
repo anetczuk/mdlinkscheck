@@ -12,7 +12,6 @@ from mdlinkscheck.main import main
 
 from testmdlinkscheck.data import get_data_path
 
-
 _LOGGER = logging.getLogger(__name__)
 
 

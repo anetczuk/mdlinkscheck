@@ -1,6 +1,6 @@
 # example with images
 
-All those links are valid acording to https://www.w3schools.com/tags/att_img_src.asp
+All those links are valid according to https://www.w3schools.com/tags/att_img_src.asp
 
 
 Simple image with absolute URL:

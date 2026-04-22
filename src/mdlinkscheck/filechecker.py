@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #
 # Copyright (c) 2023, Arkadiusz Netczuk <dev.arnet@gmail.com>
 # All rights reserved.
@@ -22,7 +21,6 @@ import mistune
 # import markdown         # invalid conversion - converts content of code block
 
 from bs4 import BeautifulSoup
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -116,11 +114,11 @@ class FileChecker:
             link_href = link.get("href")
             if not link_href:
                 continue
-            if link_href.startswith("javascript"):
+            if link_href.startswith("javascript"):  # type: ignore[union-attr]
                 # skip java script urls
                 continue
             ret_set.add(link_href)
-        return ret_set
+        return ret_set  # type: ignore[return-value]
 
     def extractImgs(self) -> Set[str]:
         ret_set = set()
@@ -129,7 +127,7 @@ class FileChecker:
             if not img_src:
                 continue
             ret_set.add(img_src)
-        return ret_set
+        return ret_set  # type: ignore[return-value]
 
     # ============================================================================
 

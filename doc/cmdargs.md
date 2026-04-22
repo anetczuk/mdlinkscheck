@@ -1,13 +1,12 @@
-## checkmdlinks.py --help
+## checkmdlinks --help
 ```
-usage: checkmdlinks.py [-h] [-la] [--silence] [-d DIR] [-f N [N ...]]
-                       [--excludes N [N ...]] [--implicit-heading-id-github]
-                       [--implicit-heading-id-bitbucket]
-                       [--check-url-reachable]
+usage: checkmdlinks [-h] [-la] [--silence] [-d DIR] [-f N [N ...]]
+                   [--excludes N [N ...]] [--implicit-heading-id-github]
+                   [--implicit-heading-id-bitbucket] [--check-url-reachable]
 
 check links in Markdown
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -la, --logall         Log all messages
   --silence             Do not output log messages
