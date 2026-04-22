@@ -1,6 +1,6 @@
 [project]
 name = "mdlinkscheck"
-version = "1.0.2"
+version = "1.0.3"
 description = "verify links in Markdown files"
 readme = "README.md"
 license = "BSD-3-Clause"
