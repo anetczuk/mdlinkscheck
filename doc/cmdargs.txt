@@ -1,4 +1,3 @@
-## <a name="main_help"></a> checkmdlinks --help
 ```
 usage: checkmdlinks [-h] [-la] [--silence] [-d DIR] [-f N [N ...]]
                    [--excludes N [N ...]] [--implicit-heading-id-github]

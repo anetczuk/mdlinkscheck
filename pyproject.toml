@@ -44,9 +44,6 @@ dev = [
     "snakeviz",
     "mtprof",
     "viztracer",
-
-    ## for Markdown files analysis
-    #"mdlinkscheck @ git+https://github.com/anetczuk/mdlinkscheck.git#subdirectory=src",
 ]
 
 [project.scripts]

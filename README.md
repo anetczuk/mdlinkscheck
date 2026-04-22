@@ -19,9 +19,41 @@ project's documentation in repository).
 
 ## Running
 
-[There](/doc/cmdargs.md) is description of command line arguments. To simple run execute (dedicated script):
+Application accepts following arguments:
+
+<!-- insertstart include="doc/cmdargs.txt" pre="\n" -->
 ```
-checkmdlinks.py --dir <path-to-dir-with-MD-files>
+usage: checkmdlinks [-h] [-la] [--silence] [-d DIR] [-f N [N ...]]
+                   [--excludes N [N ...]] [--implicit-heading-id-github]
+                   [--implicit-heading-id-bitbucket] [--check-url-reachable]
+
+check links in Markdown
+
+options:
+  -h, --help            show this help message and exit
+  -la, --logall         Log all messages
+  --silence             Do not output log messages
+  -d DIR, --dir DIR     Path to directory to search .md files for for
+                        verification
+  -f N [N ...], --files N [N ...]
+                        Space separated list of paths to files to check
+  --excludes N [N ...]  Space separated list of regex strings applied on found
+                        files to be excluded from processing
+  --implicit-heading-id-github
+                        Allow links to sections with implicit id as in GitHub
+                        (lowercased ids with dashes)
+  --implicit-heading-id-bitbucket
+                        Allow links to sections with implicit id as in
+                        BitBucket (lowercased ids with dashes and 'markdown-
+                        header-' prefix)
+  --check-url-reachable
+                        Check if external URLs are reachable
+```
+<!-- insertend -->
+
+To simple run execute:
+```
+checkmdlinks --dir <path-to-dir-with-MD-files>
 ```
 or run as module:
 ```
@@ -29,7 +61,7 @@ python3 -m mdlinkscheck --dir <path-to-dir-with-MD-files>
 ```
 Application then will go recursively and look for `.md` files and validate them. By passing `-f` with list of
 files there is possibility to run the check against given files only. Other options include passing
-particular files and setting compatibility mode with *GitHub* or *BitBucket* version of *Markdown*.
+particular files and setting compatibility mode with *GitHub* or *BitBucket* version of *Markdown* (anchors deduction).
 
 
 ## Installation
@@ -55,19 +87,56 @@ element links can point to implicit elements (*GitHub* does it in it's own way, 
 
 ## Development
 
-There are couple of helpful scripts to run:
-- `src/install-deps.sh` - installation of dependencies
-- `src/install-package.sh` - installation of package (normal mode)
-- `src/install-devel.sh` - installation of package in editable mode
-- `src/testmdlinkscheck/runtests.py` - runner for unit tests
-- `tools/checkall.sh` - execute static code checks against source code
-- `tools/installvenv.sh` - prepare venv with package
-- `process-all.sh` - run all tests (in venv), generators and code checks
+Project contains several tools and features that facilitate development and maintenance of the project.
+
+In case of pull requests please run `process-all.sh --release` before the request to check installation, run tests and
+perform source code static analysis.
+
+
+### Installation
+
+Installation for development with configuration of virtual environment:
+  - `tools/installvenv.sh --dev` to install dependencies, the package in editable mode and install development tooling.
+
+Installation for development without venv:
+  - `src/install-app.sh --dev` to install dependencies, the package in editable mode and install development tooling.
+
+Virtual environment can be also configured manually by:
+  - `python3 -m venv .venv`
+  - `source .venv/bin/activate`
+  - `python -m pip install --upgrade pip`
+  - `src/install-app.sh --dev` to install dependencies, the package in editable mode and install development tooling
+or `python -m pip install -e '.[dev]'` to install project by hand.
+
+There is also possibility to work on the project without installation. In this case project will run from local repository 
+directory. This configuration requires installation of dependencies: `./src/install-deps.sh --dev`.
+
+
+### Running tests
+
+To run tests execute `src/testmdlinkscheck/runtests.py`. Code coverage can be achieved using `coverage.sh` and 
+profiling can be calculated with script `profiler.sh`.
+
+
+### Tools scripts
+
+In *tools* directory there can be found following helper scripts:
+- `codecheck.sh` -- static code check using several tools with defined set of rules
+- `doccheck.sh` -- run `pydocstyle` with defined configuration
+- `mdcheck.sh` -- check links in Markdown files
+- `typecheck.sh` -- run `mypy` with defined configuration
+- `checkall.sh` -- execute *check* scripts all at once
+- `profiler.sh` -- profile Python scripts
+- `coverage.sh` -- measure code coverate
+- `notrailingwhitespaces.sh* -- as name states removes trailing whitespaces from _*.py*_ files
+- `rmpyc.sh` -- remove all _*.pyc_ files
+
+Those scripts can be run also from within virtual environment.
 
 
 ## Similar projects
 
-- [linkcheckmd](https://github.com/scivision/linkchecker-markdown) - does not validate links to element
+- [linkcheckmd](https://github.com/scivision/linkchecker-markdown) - does not validate links to element (anchors)
 - [markdown-link-checker](https://pypi.org/project/markdown-link-checker/) - false positives in case of links to element
 - [md-url-checker](https://pypi.org/project/md-url-check/) - does not validate links to element
 - [Check-That-Link](https://pypi.org/project/Check-That-Link/) - does not validate links to element
