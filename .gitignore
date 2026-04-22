@@ -4,3 +4,11 @@
 *.pyc
 /tmp
 /venv/
+/.venv/
+/.venv_release/
+
+/build/
+/dist/
+/src/build/
+
+.complexipy_cache/
