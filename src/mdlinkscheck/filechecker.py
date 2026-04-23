@@ -8,7 +8,6 @@
 
 import os
 import logging
-from typing import Set, Optional
 import tempfile
 import hashlib
 
@@ -40,14 +39,14 @@ class FileChecker:
         md_dir = os.path.dirname(md_path)
         self.md_dir = os.path.abspath(md_dir)
         self.soup: BeautifulSoup = None
-        self.local_targets: Optional[Set[str]] = None
+        self.local_targets: set[str] | None = None
         self.valid_links = None
         self.invalid_links = None
         # load required data
         self._load()
 
     @staticmethod
-    def initializeByContent(md_content):
+    def initializeByContent(md_content) -> "FileChecker":
         with tempfile.NamedTemporaryFile(delete=False) as file:
             file.write(md_content.encode("utf-8"))
             file.close()
@@ -55,6 +54,7 @@ class FileChecker:
 
     def setOptions(
         self,
+        *,
         implicit_heading_id_github: bool = None,
         implicit_heading_id_bitbucket: bool = None,
         check_url_reachable: bool = None,
@@ -68,7 +68,7 @@ class FileChecker:
 
     def _load(self):
         try:
-            with open(self.md_file, "r", encoding="utf-8") as file:
+            with open(self.md_file, encoding="utf-8") as file:
                 md_content = file.read()
         except FileNotFoundError as exc:
             _LOGGER.warning("could not open md file: %s", exc)
@@ -81,7 +81,7 @@ class FileChecker:
         tmp_path = tmp_path.replace("\\", "_")
 
         encoded_path = tmp_path.encode("utf-8")
-        hash_value = hashlib.md5(encoded_path).hexdigest()  # nosec
+        hash_value = hashlib.md5(encoded_path).hexdigest()  # nosec # noqa: S324
         hash_path = f"{tmp_dir}/page_{hash_value}.html"
 
         html_content = convert_md_to_html(md_content)
@@ -108,7 +108,7 @@ class FileChecker:
     def checkURLReachable(self, url):
         return self._checkReachableURL(url)
 
-    def extractHyperlinks(self) -> Set[str]:
+    def extractHyperlinks(self) -> set[str]:
         ret_set = set()
         for link in self.soup.find_all("a"):
             link_href = link.get("href")
@@ -120,7 +120,7 @@ class FileChecker:
             ret_set.add(link_href)
         return ret_set  # type: ignore[return-value]
 
-    def extractImgs(self) -> Set[str]:
+    def extractImgs(self) -> set[str]:
         ret_set = set()
         for img in self.soup.find_all("img"):
             img_src = img.get("src")
@@ -151,11 +151,10 @@ class FileChecker:
                 # valid regular file or directory
                 self.valid_links.add(img_src)
                 continue
-            if self._checkValidURL(img_src):
-                if self._checkReachableURL(img_src):
-                    # valid url
-                    self.valid_links.add(img_src)
-                    continue
+            if self._checkValidURL(img_src) and self._checkReachableURL(img_src):
+                # valid url
+                self.valid_links.add(img_src)
+                continue
 
             # invalid
             _LOGGER.warning("invalid link: %s in %s", img_src, self.md_file)
@@ -304,11 +303,7 @@ class FileChecker:
         return None
 
     def _checkValidURL(self, file_href):
-        if not validators.url(file_href):
-            # invalid
-            return False
-        # valid link
-        return True
+        return validators.url(file_href)
 
     def _checkReachableURL(self, url):
         if not self.check_url_reachable:
@@ -319,16 +314,13 @@ class FileChecker:
             headers = {"User-Agent": "My User Agent 1.0"}
             response = requests.head(url, timeout=15, headers=headers, allow_redirects=True)
             # _LOGGER.info("link %s response code: %s", url, response.status_code)
-            return response.status_code == 200
         except requests.exceptions.ConnectionError:
             return False
 
+        return response.status_code == 200
+
     def _checkLocalTarget(self, target_label):
-        if target_label in self.local_targets:
-            # found local target
-            return True
-        # invalid target
-        return False
+        return target_label in self.local_targets
 
     def _getElementsIds(self):
         # on GitHub headers are converted to targets
@@ -373,8 +365,7 @@ def convert_md_to_html(md_content):
 
     renderer = mistune.HTMLRenderer(escape=False, allow_harmful_protocols=True)
     converter = mistune.Markdown(renderer)
-    html_content = converter(md_content)
-    return html_content
+    return converter(md_content)
 
 
 def convert_header_to_github_target(header_label):
@@ -383,8 +374,7 @@ def convert_header_to_github_target(header_label):
     target = target.replace(",", "")
     target = target.replace(".", "")
     target = target.replace("(", "")
-    target = target.replace(")", "")
-    return target
+    return target.replace(")", "")
 
 
 # def convert_header_to_underscore(header_label):

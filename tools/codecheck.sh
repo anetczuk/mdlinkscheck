@@ -19,7 +19,6 @@ fi
 FIX_ERROR=0
 
 while [[ $# -gt 0 ]]; do
-    # shellcheck disable=SC2034
     case $1 in
       --fix)    FIX_ERROR=1
                 shift # past argument
@@ -139,79 +138,93 @@ popd > /dev/null
 
 ## ============================================
 
-# echo
-# echo "running ruff"
-# echo "to ignore warning for module put following line on top of file: # ruff: noqa: <check_id>"
-# echo "to ignore warning for one line put following comment in line before: # noqa: <check_id>"
-# run_ruff() {
-#     local check_dir="${1}"
-#     echo "checking ${check_dir}"
-#     pushd "${check_dir}" > /dev/null
-# 
-#     local RUFF_ARGS=()
-#     if [[ ${FIX_ERROR} -ne 0 ]]; then
-#         RUFF_ARGS+=(--fix)
-#     fi
-# 
-#     ignore_errors=()
-#     ignore_errors+=(ANN001)     ## ANN001 Missing type annotation for function argument
-#     ignore_errors+=(ANN201)     ## ANN201 Missing return type annotation for public function
-#     ignore_errors+=(ANN202)     ## ANN202 Missing return type annotation for private function
-#     ignore_errors+=(ANN204)     ## ANN204 Missing return type annotation for special method
-# #     ignore_errors+=(D100)       ## D100 Missing docstring in public module
-# #     ignore_errors+=(D101)       ## D101 Missing docstring in public class
-# #     ignore_errors+=(D102)       ## D102 Missing docstring in public method
-# #     ignore_errors+=(D103)       ## D103 Missing docstring in public function
-# #     ignore_errors+=(D104)       ## D104 Missing docstring in public package
-# #     ignore_errors+=(D107)       ## D107 Missing docstring in `__init__`
-#     ignore_errors+=(D203)       ## incorrect-blank-line-before-class
-#     ignore_errors+=(D213)       ## multi-line-summary-second-line
-#     ignore_errors+=(E501)       ## E501 Line too long (111 > 88)
-#     ignore_errors+=(ERA001)     ## ERA001 Found commented-out code
-#     ignore_errors+=(PLR2004)    ## PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-#     ignore_errors+=(PT009)      ## PT009 Use a regular `assert` instead of unittest-style `assertEqual`
-#     ignore_errors+=(RUF013)     ## RUF013 PEP 484 prohibits implicit `Optional`
-#     ignore_errors+=(RUF100)     ## RUF100 [*] Unused `noqa` directive (unused: `F811`)
-#     ignore_errors+=(TRY400)     ## TRY400 Use `logging.exception` instead of `logging.error`
-#     ignore_errors+=(PT027)      ## PT027 Use `pytest.raises` instead of unittest-style `assertRaises`
-# 
-#     ## TODO: fix    
-#     ignore_errors+=(DTZ007)     ## DTZ007 Naive datetime constructed using `datetime.datetime.strptime()` without %z
-#     ignore_errors+=(DTZ011)     ## DTZ011 `datetime.date.today()` used
-#     ignore_errors+=(I001)       ## I001 [*] Import block is un-sorted or un-formatted
-#     ignore_errors+=(PTH100)     ## PTH100 `os.path.abspath()` should be replaced by `Path.resolve()`
-#     ignore_errors+=(PTH103)     ## PTH103 `os.makedirs()` should be replaced by `Path.mkdir(parents=True)`
-#     ignore_errors+=(PTH109)     ## PTH109 `os.getcwd()` should be replaced by `Path.cwd()`
-#     ignore_errors+=(PTH112)     ## PTH112 `os.path.isdir()` should be replaced by `Path.is_dir()`
-#     ignore_errors+=(PTH113)     ## PTH113 `os.path.isfile()` should be replaced by `Path.is_file()`
-#     ignore_errors+=(PTH117)     ## PTH117 `os.path.isabs()` should be replaced by `Path.is_absolute()`
-#     ignore_errors+=(PTH118)     ## PTH118 `os.path.join()` should be replaced by `Path` with `/` operator
-#     ignore_errors+=(PTH120)     ## PTH120 `os.path.dirname()` should be replaced by `Path.parent`
-#     ignore_errors+=(PTH122)     ## PTH122 `os.path.splitext()` should be replaced by `Path.suffix`, `Path.stem`, and `Path.parent`
-#     ignore_errors+=(PTH123)     ## PTH123 `open()` should be replaced by `Path.open()
-#     ignore_errors+=(PTH208)     ## PTH208 Use `pathlib.Path.iterdir()` instead.
-# 
-#     ignore_string="${ignore_errors[*]}"
-#     ignore_string="${ignore_string//${IFS:0:1}/,}"
-# 
-#     if [ ${#RUFF_ARGS[@]} -ne 0 ]; then
-#         "${COMMAND_PATH}"ruff check --select ALL --ignore "${ignore_string}" "${RUFF_ARGS[*]}"
-#     else
-#         "${COMMAND_PATH}"ruff check --select ALL --ignore "${ignore_string}"
-#     fi
-# 
-#     exit_code=$?
-#     popd > /dev/null
-#     if [ $exit_code -ne 0 ]; then
-#         exit $exit_code
-#     fi
-# }
-# 
-# for dir in "${check_dirs[@]}"; do
-#    run_ruff "${dir}"
-# done
-# 
-# echo "ruff -- no warnings found"
+echo
+echo "running ruff"
+echo "to ignore warning for module put following line on top of file: # ruff: noqa: <check_id>"
+echo "to ignore warning for one line put following comment in line before: # noqa: <check_id>"
+run_ruff() {
+    local check_dir="${1}"
+    echo "checking ${check_dir}"
+    pushd "${check_dir}" > /dev/null
+
+    local RUFF_ARGS=()
+    if [[ ${FIX_ERROR} -ne 0 ]]; then
+        RUFF_ARGS+=(--fix)
+    fi
+
+    ignore_errors=()
+    ignore_errors+=(ANN001)     ## ANN001 Missing type annotation for function argument
+    ignore_errors+=(ANN201)     ## ANN201 Missing return type annotation for public function
+    ignore_errors+=(ANN202)     ## ANN202 Missing return type annotation for private function
+    ignore_errors+=(ANN204)     ## ANN204 Missing return type annotation for special method
+    ignore_errors+=(D100)       ## D100 Missing docstring in public module
+    ignore_errors+=(D101)       ## D101 Missing docstring in public class
+    ignore_errors+=(D102)       ## D102 Missing docstring in public method
+    ignore_errors+=(D103)       ## D103 Missing docstring in public function
+    ignore_errors+=(D104)       ## D104 Missing docstring in public package
+    ignore_errors+=(D107)       ## D107 Missing docstring in `__init__`
+    ignore_errors+=(D203)       ## incorrect-blank-line-before-class
+    ignore_errors+=(D213)       ## multi-line-summary-second-line
+    ignore_errors+=(E501)       ## E501 Line too long (111 > 88)
+    ignore_errors+=(ERA001)     ## ERA001 Found commented-out code
+    ignore_errors+=(PLR2004)    ## PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+    ignore_errors+=(PT009)      ## PT009 Use a regular `assert` instead of unittest-style `assertEqual`
+    ignore_errors+=(RUF013)     ## RUF013 PEP 484 prohibits implicit `Optional`
+    ignore_errors+=(RUF100)     ## RUF100 [*] Unused `noqa` directive (unused: `F811`)
+    ignore_errors+=(TRY400)     ## TRY400 Use `logging.exception` instead of `logging.error`
+    ignore_errors+=(PT027)      ## PT027 Use `pytest.raises` instead of unittest-style `assertRaises`
+
+    ## TODO: fix   
+    ignore_errors+=(C405)       ## C405 Unnecessary list literal (rewrite as a set literal)
+    ignore_errors+=(FIX002)     ## FIX002 Line contains TODO, consider resolving the issue
+    ignore_errors+=(N802)       ## N802 Function name `test_checkMarkdown_codeblock` should be lowercase
+    ignore_errors+=(N816)       ## N816 Variable `testResult` in global scope should not be mixedCase
+    ignore_errors+=(TD002)      ## TD002 Missing author in TODO; try: `# TODO(<author_name>): ...` or `# TODO @<author_name>: ...`
+    ignore_errors+=(TD003)      ## TD003 Missing issue link for this TODO
+    ignore_errors+=(S108)       ## S108 Probable insecure usage of temporary file or directory: "/tmp/other_file.md"
+    ignore_errors+=(PTH207)     ## PTH207 Replace `glob` with `Path.glob` or `Path.rglob`
+    ignore_errors+=(PLR0912)    ## PLR0912 Too many branches (20 > 12)
+    ignore_errors+=(PLR0911)    ## PLR0911 Too many return statements (19 > 6)
+    ignore_errors+=(C901)       ## C901 `_checkHref` is too complex (20 > 10)
+    
+    ignore_errors+=(DTZ007)     ## DTZ007 Naive datetime constructed using `datetime.datetime.strptime()` without %z
+    ignore_errors+=(DTZ011)     ## DTZ011 `datetime.date.today()` used
+    ignore_errors+=(I001)       ## I001 [*] Import block is un-sorted or un-formatted
+    ignore_errors+=(PTH100)     ## PTH100 `os.path.abspath()` should be replaced by `Path.resolve()`
+    ignore_errors+=(PTH103)     ## PTH103 `os.makedirs()` should be replaced by `Path.mkdir(parents=True)`
+    ignore_errors+=(PTH109)     ## PTH109 `os.getcwd()` should be replaced by `Path.cwd()`
+    ignore_errors+=(PTH112)     ## PTH112 `os.path.isdir()` should be replaced by `Path.is_dir()`
+    ignore_errors+=(PTH113)     ## PTH113 `os.path.isfile()` should be replaced by `Path.is_file()`
+    ignore_errors+=(PTH117)     ## PTH117 `os.path.isabs()` should be replaced by `Path.is_absolute()`
+    ignore_errors+=(PTH118)     ## PTH118 `os.path.join()` should be replaced by `Path` with `/` operator
+    ignore_errors+=(PTH120)     ## PTH120 `os.path.dirname()` should be replaced by `Path.parent`
+    ignore_errors+=(PTH122)     ## PTH122 `os.path.splitext()` should be replaced by `Path.suffix`, `Path.stem`, and `Path.parent`
+    ignore_errors+=(PTH123)     ## PTH123 `open()` should be replaced by `Path.open()
+    ignore_errors+=(PTH208)     ## PTH208 Use `pathlib.Path.iterdir()` instead.
+
+    ignore_string="${ignore_errors[*]}"
+    ignore_string="${ignore_string//${IFS:0:1}/,}"
+
+    ignore_tests="testmdlinkscheck/**/test_*:D"
+
+    if [ ${#RUFF_ARGS[@]} -ne 0 ]; then
+        "${COMMAND_PATH}"ruff check --select ALL --ignore "${ignore_string}" --per-file-ignores "${ignore_tests}" "${RUFF_ARGS[*]}"
+    else
+        "${COMMAND_PATH}"ruff check --select ALL --ignore "${ignore_string}" --per-file-ignores "${ignore_tests}"
+    fi
+
+    exit_code=$?
+    popd > /dev/null
+    if [ $exit_code -ne 0 ]; then
+        exit $exit_code
+    fi
+}
+
+for dir in "${check_dirs[@]}"; do
+   run_ruff "${dir}"
+done
+
+echo "ruff -- no warnings found"
 
 
 ## ============================================

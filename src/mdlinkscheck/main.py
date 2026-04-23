@@ -29,10 +29,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def find_md_files(search_dir):
-    ret_list = []
-    for filename in glob(f"{search_dir}/**/*.md", recursive=True):
-        ret_list.append(filename)
-    return ret_list
+    return list(glob(f"{search_dir}/**/*.md", recursive=True))
 
 
 def filter_items(items_list, regex_list):
@@ -60,10 +57,18 @@ def main(args=None):
     parser.add_argument("-la", "--logall", action="store_true", help="Log all messages")
     parser.add_argument("--silence", action="store_true", help="Do not output log messages")
     parser.add_argument(
-        "-d", "--dir", action="store", help="Path to directory to search .md files for for verification"
+        "-d",
+        "--dir",
+        action="store",
+        help="Path to directory to search .md files for for verification",
     )
     parser.add_argument(
-        "-f", "--files", metavar="N", type=str, nargs="+", help="Space separated list of paths to files to check"
+        "-f",
+        "--files",
+        metavar="N",
+        type=str,
+        nargs="+",
+        help="Space separated list of paths to files to check",
     )
     parser.add_argument(
         "--excludes",

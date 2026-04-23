@@ -39,7 +39,7 @@ class MainTest(unittest.TestCase):
                 md2_path,
                 "--implicit-heading-id-github",
                 "--implicit-heading-id-bitbucket",
-            ]
+            ],
         )
 
         self.assertEqual(error_code, 0)

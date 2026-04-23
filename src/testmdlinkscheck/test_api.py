@@ -45,7 +45,7 @@ class APITest(unittest.TestCase):
                 "#another_subsection",
                 "mailto:xxx@yyy.zzz",
                 "https://www.w3schools.com",
-            ]
+            ],
         )
 
         self.assertSetEqual(links_set, result_set)
@@ -55,7 +55,7 @@ class APITest(unittest.TestCase):
         links_set = extract_imgs(links_example_path)
 
         result_set = set(
-            ["http://www.example.com/image.gif", "../image.gif", "http://www.example.com/image.gif", "img_girl2.jpg"]
+            ["http://www.example.com/image.gif", "../image.gif", "http://www.example.com/image.gif", "img_girl2.jpg"],
         )
 
         self.assertSetEqual(links_set, result_set)
