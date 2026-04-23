@@ -17,6 +17,14 @@ project's documentation in repository).
 - ignore *Markdown* syntax in code blocks (*C++* lambdas syntax is similar to *Markdown* links)
 
 
+## How it works?
+
+Library simply converts *Markdown* to *HTML* and then extracts links using *BeautifulSoup*. After that links are
+verified - this is quite tricky, because links can be absolute, relative, can point to HTML element, can point to
+local file or external resource. Moreover links can contain e-mail address (`mailto:`) or *JavaScript*. Even worse,
+element links can point to implicit elements (*GitHub* does it in it's own way, *bitbucket* does it in different way).
+
+
 ## Running
 
 Application accepts following arguments:
@@ -67,22 +75,16 @@ particular files and setting compatibility mode with *GitHub* or *BitBucket* ver
 ## Installation
 
 Installation of package can be done by:
- - to install package from downloaded ZIP file execute: `pip3 install --user -I file:mdlinkcheck-master.zip#subdirectory=src`
- - to install package directly from GitHub execute: `pip3 install --user -I git+https://github.com/anetczuk/mdlinkcheck.git#subdirectory=src`
- - uninstall: `pip3 uninstall mdlinkcheck`
+ - to install using PyPI: `pip3 install --user mdlinkscheck`
+ - to install package from *GitHub* downloaded ZIP file execute: `pip3 install --user -I file:mdlinkscheck-master.zip#subdirectory=src`
+ - to install package directly from *GitHub* execute: `pip3 install --user -I git+https://github.com/anetczuk/mdlinkscheck.git#subdirectory=src`
+ - installation from local repository root directory: `pip3 install --user .`
 
-Installation For development:
- - `install-deps.sh` to install package dependencies only (`requirements.txt`)
- - `install-package.sh` to install package in standard way through `pip` (with dependencies)
- - `install-devel.sh` to install package in developer mode using `pip` (with dependencies)
+To uninstall run: `pip3 uninstall mdlinkscheck`
 
+To install project under virtual environment use `tools/installvenv.sh`.
 
-## How it works?
-
-Library simply converts *Markdown* to *HTML* and then extracts links using *BeautifulSoup*. After that links are
-verified - this is quite tricky, because links can be absolute, relative, can point to HTML element, can point to
-local file or external resource. Moreover links can contain e-mail address (`mailto:`) or *JavaScript*. Even worse,
-element links can point to implicit elements (*GitHub* does it in it's own way, *bitbucket* does it in different way).
+Development installation is covered in [Development](#development) section.
 
 
 ## Development
