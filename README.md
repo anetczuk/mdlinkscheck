@@ -75,7 +75,7 @@ particular files and setting compatibility mode with *GitHub* or *BitBucket* ver
 ## Installation
 
 Installation of package can be done by:
- - to install using PyPI: `pip3 install --user mdlinkscheck`
+ - to install using *PyPI*: `pip3 install --user mdlinkscheck`
  - to install package from *GitHub* downloaded ZIP file execute: `pip3 install --user -I file:mdlinkscheck-master.zip#subdirectory=src`
  - to install package directly from *GitHub* execute: `pip3 install --user -I git+https://github.com/anetczuk/mdlinkscheck.git#subdirectory=src`
  - installation from local repository root directory: `pip3 install --user .`

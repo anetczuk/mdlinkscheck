@@ -1,12 +1,14 @@
 [project]
 name = "mdlinkscheck"
-version = "1.0.4"
-description = "verify links in Markdown files"
+version = "1.0.5"
+description = "verify links in Markdown files like standard relative and absolute links, links to elements, images and external URLs"
+keywords = ["md", "Markdown", "links", "linter"]
 readme = "README.md"
 license = "BSD-3-Clause"
 license-files = ["LICENSE"]
 authors = [
-    { name = "Arkadiusz Netczuk" }
+    ## separate 'name' and 'email' hack to fill "Author:" and "Author-email:" fields
+    { name = "Arkadiusz Netczuk" }, { email = "dev.arnet@gmail.com" }
 ]
 requires-python = ">=3.12"
 dependencies = [
@@ -17,6 +19,7 @@ dependencies = [
 ]
 
 [project.urls]
+Homepage = "https://github.com/anetczuk/mdlinkscheck"
 Repository = "https://github.com/anetczuk/mdlinkscheck"
 
 [project.optional-dependencies]
